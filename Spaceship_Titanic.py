@@ -102,7 +102,7 @@ elif mnu == 'EDA':
         ''')
     train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
 
-    st.write('원래의 Cabin 열을 더이상 필요하지 않으므로 삭제한다.')
+    st.write('원래의 Cabin 열은 더이상 필요하지 않으므로 삭제한다.')
     st.code('''
         try:
             train = train.drop('Cabin', axis=1)
@@ -116,7 +116,8 @@ elif mnu == 'EDA':
 
     st.write('좌, 우현에 따른 차원이동비율 비교')
     st.dataframe(
-        train[['Side', 'Transported']].groupby(['Side'], as_index=True).mean().sort_values(by='Transported',ascending=False))
+        train[['Side', 'Transported']].groupby(['Side'], as_index=True).mean().sort_values(by='Transported',ascending=True))
+    st.write('P : 좌현, S : 우현')
 
     st.markdown('- train.info()')
     buffer = io.StringIO()
@@ -270,7 +271,7 @@ elif mnu == '모델링':
 
     pred = rfc.predict(X_val)
     a = accuracy_score(y_val, pred)
-    st.write("Accuracy Random Forest Classifier : ", round(accuracy_score(y_val, pred), 4) * 100, '%')
+    st.write("Random Forest Classifier 정확도 : ", round(accuracy_score(y_val, pred), 4) * 100, '%')
     ''')
     from sklearn.model_selection import train_test_split
     from sklearn.ensemble import RandomForestClassifier
@@ -286,7 +287,7 @@ elif mnu == '모델링':
 
     pred = rfc.predict(X_val)
     a = accuracy_score(y_val, pred)
-    st.write("Accuracy Random Forest Classifier : ", round(accuracy_score(y_val, pred), 4) * 100, '%')
+    st.write("Random Forest Classifier 정확도 : ", round(accuracy_score(y_val, pred), 4) * 100, '%')
     
     st.markdown('#### Submission')
 
