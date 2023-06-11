@@ -275,8 +275,8 @@ elif mnu == '모델링':
     pred = rfc.predict(X_val)
     a = accuracy_score(y_val, pred)
     st.write("Accuracy Random Forest Classifier : ", round(accuracy_score(y_val, pred), 4) * 100, '%')
-
-    test.isnull().sum().sort_values(ascending=False)
+    
+    st.markdown('제출')
 
     test['Age'] = test['Age'].fillna(test['Age'].mean())
     test['RoomService'] = test['RoomService'].fillna(test['RoomService'].mean())
@@ -304,9 +304,9 @@ elif mnu == '모델링':
     test["VIP"].replace(False, 0, inplace=True)
     test["VIP"].replace(True, 1, inplace=True)
 
-    test_df = test.drop(['Name', 'Cabin'], axis=1)
+    test = test.drop(['Name', 'Cabin'], axis=1)
 
-    st.dataframe(test_df.head())
+    st.dataframe(test.head())
 
     pred_final = rfc.predict(test)
 
