@@ -172,6 +172,19 @@ elif mnu == '모델링':
 
     st.markdown('#### 피처 엔지니어링')
 
+    train['Age'] = train['Age'].fillna(train['Age'].mean())
+    train['RoomService'] = train['RoomService'].fillna(train['RoomService'].mean())
+    train['FoodCourt'] = train['FoodCourt'].fillna(train['FoodCourt'].mean())
+    train['ShoppingMall'] = train['ShoppingMall'].fillna(train['ShoppingMall'].mean())
+    train['Spa'] = train['Spa'].fillna(train['Spa'].mean())
+    train['VRDeck'] = train['VRDeck'].fillna(train['VRDeck'].mean())
+
+    train['HomePlanet'] = train['HomePlanet'].fillna(train['HomePlanet'].mode()[0])
+    train['CryoSleep'] = train['CryoSleep'].fillna(train['CryoSleep'].mode()[0])
+    train['Destination'] = train['Destination'].fillna(train['Destination'].mode()[0])
+    train['VIP'] = train['VIP'].fillna(train['VIP'].mode()[0])
+    train['Cabin'] = train['Cabin'].fillna(train['Cabin'].mode()[0])
+
     train['Cabin_side'] = train['Cabin'].apply(lambda x: x.split('/')[2])
     train['Cabin_side'].unique()
 
