@@ -254,20 +254,37 @@ elif mnu == '모델링':
     a = accuracy_score(y_val, pred)
     st.write("Accuracy Random Forest Classifier : ", round(accuracy_score(y_val, pred), 4) * 100, '%')
 
-    # Load the test dataset
-    test = pd.read_csv('/kaggle/input/spaceship-titanic/test.csv')
-    submission_id = test.PassengerId
+    test.isnull().sum().sort_values(ascending=False)
 
-    # Replace NaN values with zero
-    test[['VIP', 'CryoSleep']] = test[['VIP', 'CryoSleep']].fillna(value=0)
+    test['Age'] = test['Age'].fillna(test['Age'].mean())
+    test['RoomService'] = test['RoomService'].fillna(test['RoomService'].mean())
+    test['FoodCourt'] = test['FoodCourt'].fillna(test['FoodCourt'].mean())
+    test['ShoppingMall'] = test['ShoppingMall'].fillna(test['ShoppingMall'].mean())
+    test['Spa'] = test['Spa'].fillna(test['Spa'].mean())
+    test['VRDeck'] = test['VRDeck'].fillna(test['VRDeck'].mean())
 
-    # Creating New Features - Deck, Cabin_num and Side from the column Cabin and remove Cabin
-    test[["Deck", "Cabin_num", "Side"]] = test["Cabin"].str.split("/", expand=True)
-    test_df = test.drop('Cabin', axis=1)
+    test['HomePlanet'] = test['HomePlanet'].fillna(test['HomePlanet'].mode()[0])
+    test['CryoSleep'] = test['CryoSleep'].fillna(test['CryoSleep'].mode()[0])
+    test['Destination'] = test['Destination'].fillna(test['Destination'].mode()[0])
+    test['VIP'] = test['VIP'].fillna(test['VIP'].mode()[0])
+    test['Cabin'] = test['Cabin'].fillna(test['Cabin'].mode()[0])
 
-    # Convert boolean to 1's and 0's
-    test_df['VIP'] = test_df['VIP'].astype(int)
-    test_df['CryoSleep'] = test_df['CryoSleep'].astype(int)
+    test['Cabin_side'] = test['Cabin'].apply(lambda x: x.split('/')[2])
+    test['Cabin_side'].unique()
+
+    test.HomePlanet = test.HomePlanet.map({'Europa': 0, 'Earth': 1, 'Mars': 2})
+    test.Cabin_side = test.Cabin_side.map({'P': 0, 'S': 1})
+
+    test.Destination = test.Destination.map({'TRAPPIST-1e': 0, 'PSO J318.5-22': 1, '55 Cancri e': 2})
+
+    test["CryoSleep"].replace(False, 0, inplace=True)
+    test["CryoSleep"].replace(True, 1, inplace=True)
+    test["VIP"].replace(False, 0, inplace=True)
+    test["VIP"].replace(True, 1, inplace=True)
+
+    test_df = test.drop(['Name', 'Cabin'], axis=1)
+
+    st.dataframe(test_df.head())
 
     pred_final = rfc.predict(test)
 
