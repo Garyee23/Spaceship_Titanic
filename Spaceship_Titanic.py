@@ -104,6 +104,71 @@ elif mnu == 'EDA':
     test.info(buf=buffer)
     st.text(buffer.getvalue())
 
+    # st.markdown('**필요 없는 피처 제거**')
+    # st.write('PassengerId 와 Name 열은 모델 훈련에 필요하지 않기 때문에 drop을 진행.')
+    # st.code('''
+    # dataset_df = train.drop(['PassengerId', 'Name'], axis=1)
+    # dataset_df.head(5)
+    # ''')
+    # train = train.drop(['PassengerId', 'Name'], axis=1)
+    # train.head(5)
+    #
+    # st.markdown('**결측치 제거**')
+    # st.write('다음의 코드를 통해 결측된 값을 확인.')
+    # st.code('''
+    # train.isnull().sum().sort_values(ascending=False)
+    # ''')
+    # train.isnull().sum().sort_values(ascending=False)
+
+    # st.write('데이터에는 숫자, 범주형 및 누락된 피처가 혼합되어 있다. TF-DF는 이러한 모든 피처 유형을 기본적으로 지원하므로 사전 처리가 필요하지 않다.')
+    # st.write('그러나 데이터에는 결측값이 있는 boolean 필드도 있다. TF-DF는 아직 boolean 필드를 지원하지 않으므로 boolean필드들을 int로 변환해야한다. boolean 필드의 결측값을 설명하기 위해 0으로 대체해보자.')
+    # st.write('여기서는 숫자 열의 null 값 항목도 0으로 바꾸고, 범주형 열의 결측값만 TF-DF가 처리하도록 할 것이다.')
+    # st.markdown('**참고 : 필요한 경우 TF-DF가 숫자 열의 결측값을 처리하도록 선택할 수 있다.**')
+    # st.code('''
+    # train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']] = train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']].fillna(value=0)
+    # train.isnull().sum().sort_values(ascending=False)
+    # ''')
+    # train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']] = train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']].fillna(value=0)
+    # train.isnull().sum().sort_values(ascending=False)
+    #
+    # st.write('TF-DF는 boolean 열을 처리할 수 없기 때문에 Transported 열의 레이블을 조정하여 TF-DF가 예상하는 정수 형식으로 변환해야 한다.')
+    # st.code('''
+    # label = "Transported"
+    # train[label] = train[label].astype(int)
+    # ''')
+    # label = "Transported"
+    # train[label] = train[label].astype(int)
+    #
+    # st.write('또한 boolean필드, CryoSleep 및 VIP를 int로 변환할 것이다.')
+    # st.code('''
+    # train['VIP'] = train['VIP'].astype(int)
+    # train['CryoSleep'] = train['CryoSleep'].astype(int)
+    # ''')
+    # train['VIP'] = train['VIP'].astype(int)
+    # train['CryoSleep'] = train['CryoSleep'].astype(int)
+    #
+    # st.write('Cabin 열 값은 Deck/Cabin_num,Side 형식의 문자열이다. 여기서는 Cabin 열을 분할하고 Deck, Cabin_num 및 Side 열 3개를 새로 만든다. 이러한 개별 데이터를 통해 모델을 훈련시키는 것이 더 쉽다.')
+    # st.write('따라서 다음 코드를 통해 Cabin 열을 Deck, Cabin_num 및 Side 열로 분할한다.')
+    # st.code('''
+    # train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
+    # ''')
+    # train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
+    #
+    # st.write('원래의 Cabin 열을 더이상 필요하지 않으므로 삭제한다.')
+    # st.code('''
+    # try:
+    #     train = train.drop('Cabin', axis=1)
+    # except KeyError:
+    #     print("Field does not exist")
+    # ''')
+    # try:
+    #     train = train.drop('Cabin', axis=1)
+    # except KeyError:
+    #     print("Field does not exist")
+    #
+    # st.write('피처 엔지니어링을 통해 준비된 데이터를 확인해보자')
+    # st.dataframe(train.head(5))
+
 
 
 elif mnu == '시각화':
@@ -169,6 +234,8 @@ elif mnu == '모델링':
 
     st.markdown('#### 피처 엔지니어링')
 
+    st.write('숫자 열의 평균으로 null 값 채우기')
+    st.code('''
     train['Age'] = train['Age'].fillna(train['Age'].mean())
     train['RoomService'] = train['RoomService'].fillna(train['RoomService'].mean())
     train['FoodCourt'] = train['FoodCourt'].fillna(train['FoodCourt'].mean())
@@ -181,10 +248,45 @@ elif mnu == '모델링':
     train['Destination'] = train['Destination'].fillna(train['Destination'].mode()[0])
     train['VIP'] = train['VIP'].fillna(train['VIP'].mode()[0])
     train['Cabin'] = train['Cabin'].fillna(train['Cabin'].mode()[0])
+    ''')
+    train['Age'] = train['Age'].fillna(train['Age'].mean())
+    train['RoomService'] = train['RoomService'].fillna(train['RoomService'].mean())
+    train['FoodCourt'] = train['FoodCourt'].fillna(train['FoodCourt'].mean())
+    train['ShoppingMall'] = train['ShoppingMall'].fillna(train['ShoppingMall'].mean())
+    train['Spa'] = train['Spa'].fillna(train['Spa'].mean())
+    train['VRDeck'] = train['VRDeck'].fillna(train['VRDeck'].mean())
 
+    st.write('범주형 열의 모드로 null 값 채우기')
+    st.code('''
+    train['HomePlanet'] = train['HomePlanet'].fillna(train['HomePlanet'].mode()[0])
+    train['CryoSleep'] = train['CryoSleep'].fillna(train['CryoSleep'].mode()[0])
+    train['Destination'] = train['Destination'].fillna(train['Destination'].mode()[0])
+    train['VIP'] = train['VIP'].fillna(train['VIP'].mode()[0])
+    train['Cabin'] = train['Cabin'].fillna(train['Cabin'].mode()[0])
+    ''')
+    train['HomePlanet'] = train['HomePlanet'].fillna(train['HomePlanet'].mode()[0])
+    train['CryoSleep'] = train['CryoSleep'].fillna(train['CryoSleep'].mode()[0])
+    train['Destination'] = train['Destination'].fillna(train['Destination'].mode()[0])
+    train['VIP'] = train['VIP'].fillna(train['VIP'].mode()[0])
+    train['Cabin'] = train['Cabin'].fillna(train['Cabin'].mode()[0])
+
+    st.write('Cabin 피처값을 P(좌현), S(우현)으로 나누기')
+    st.code('''
+    train['Cabin_side'] = train['Cabin'].apply(lambda x: x.split('/')[2])
+    train['Cabin_side'].unique()
+    ''')
     train['Cabin_side'] = train['Cabin'].apply(lambda x: x.split('/')[2])
     train['Cabin_side'].unique()
 
+    st.write('범주형 피쳐를 숫자 피쳐로 변환')
+    st.code('''
+    train.HomePlanet = train.HomePlanet.map({'Europa': 0, 'Earth': 1, 'Mars': 2})
+    train.Cabin_side = train.Cabin_side.map({'P': 0, 'S': 1})
+    
+    train.Destination = train.Destination.map({'TRAPPIST-1e': 0, 'PSO J318.5-22': 1, '55 Cancri e': 2})
+
+    train = train.drop(['Name', 'Cabin'], axis=1)
+    ''')
     train.HomePlanet = train.HomePlanet.map({'Europa': 0, 'Earth': 1, 'Mars': 2})
     train.Cabin_side = train.Cabin_side.map({'P': 0, 'S': 1})
 
@@ -192,74 +294,27 @@ elif mnu == '모델링':
 
     train = train.drop(['Name', 'Cabin'], axis=1)
 
+    st.write('피처 엔지니어링이 된 데이터 확인')
     st.dataframe(train)
-    # st.markdown('**필요 없는 피처 제거**')
-    # st.write('PassengerId 와 Name 열은 모델 훈련에 필요하지 않기 때문에 drop을 진행.')
-    # st.code('''
-    # dataset_df = train.drop(['PassengerId', 'Name'], axis=1)
-    # dataset_df.head(5)
-    # ''')
-    # train = train.drop(['PassengerId', 'Name'], axis=1)
-    # train.head(5)
-    #
-    # st.markdown('**결측치 제거**')
-    # st.write('다음의 코드를 통해 결측된 값을 확인.')
-    # st.code('''
-    # train.isnull().sum().sort_values(ascending=False)
-    # ''')
-    # train.isnull().sum().sort_values(ascending=False)
-    
-    # st.write('데이터에는 숫자, 범주형 및 누락된 피처가 혼합되어 있다. TF-DF는 이러한 모든 피처 유형을 기본적으로 지원하므로 사전 처리가 필요하지 않다.')
-    # st.write('그러나 데이터에는 결측값이 있는 boolean 필드도 있다. TF-DF는 아직 boolean 필드를 지원하지 않으므로 boolean필드들을 int로 변환해야한다. boolean 필드의 결측값을 설명하기 위해 0으로 대체해보자.')
-    # st.write('여기서는 숫자 열의 null 값 항목도 0으로 바꾸고, 범주형 열의 결측값만 TF-DF가 처리하도록 할 것이다.')
-    # st.markdown('**참고 : 필요한 경우 TF-DF가 숫자 열의 결측값을 처리하도록 선택할 수 있다.**')
-    # st.code('''
-    # train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']] = train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']].fillna(value=0)
-    # train.isnull().sum().sort_values(ascending=False)
-    # ''')
-    # train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']] = train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']].fillna(value=0)
-    # train.isnull().sum().sort_values(ascending=False)
-    #
-    # st.write('TF-DF는 boolean 열을 처리할 수 없기 때문에 Transported 열의 레이블을 조정하여 TF-DF가 예상하는 정수 형식으로 변환해야 한다.')
-    # st.code('''
-    # label = "Transported"
-    # train[label] = train[label].astype(int)
-    # ''')
-    # label = "Transported"
-    # train[label] = train[label].astype(int)
-    #
-    # st.write('또한 boolean필드, CryoSleep 및 VIP를 int로 변환할 것이다.')
-    # st.code('''
-    # train['VIP'] = train['VIP'].astype(int)
-    # train['CryoSleep'] = train['CryoSleep'].astype(int)
-    # ''')
-    # train['VIP'] = train['VIP'].astype(int)
-    # train['CryoSleep'] = train['CryoSleep'].astype(int)
-    #
-    # st.write('Cabin 열 값은 Deck/Cabin_num,Side 형식의 문자열이다. 여기서는 Cabin 열을 분할하고 Deck, Cabin_num 및 Side 열 3개를 새로 만든다. 이러한 개별 데이터를 통해 모델을 훈련시키는 것이 더 쉽다.')
-    # st.write('따라서 다음 코드를 통해 Cabin 열을 Deck, Cabin_num 및 Side 열로 분할한다.')
-    # st.code('''
-    # train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
-    # ''')
-    # train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
-    #
-    # st.write('원래의 Cabin 열을 더이상 필요하지 않으므로 삭제한다.')
-    # st.code('''
-    # try:
-    #     train = train.drop('Cabin', axis=1)
-    # except KeyError:
-    #     print("Field does not exist")
-    # ''')
-    # try:
-    #     train = train.drop('Cabin', axis=1)
-    # except KeyError:
-    #     print("Field does not exist")
-    #
-    # st.write('피처 엔지니어링을 통해 준비된 데이터를 확인해보자')
-    # st.dataframe(train.head(5))
 
-    st.markdown('**데이터 나누기**')
+    st.markdown('**Random Forest Classifier을 사용한 모델 훈련 및 검증**')
+    st.code('''
+    from sklearn.model_selection import train_test_split
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import accuracy_score
 
+    X = train.drop(['Transported'], axis=1)
+    y = train['Transported']
+
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=0)
+
+    rfc = RandomForestClassifier(n_estimators=600, max_depth=18, random_state=42, min_samples_leaf=4)
+    rfc.fit(X_train, y_train)
+
+    pred = rfc.predict(X_val)
+    a = accuracy_score(y_val, pred)
+    st.write("Accuracy Random Forest Classifier : ", round(accuracy_score(y_val, pred), 4) * 100, '%')
+    ''')
     from sklearn.model_selection import train_test_split
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.metrics import accuracy_score
@@ -276,8 +331,17 @@ elif mnu == '모델링':
     a = accuracy_score(y_val, pred)
     st.write("Accuracy Random Forest Classifier : ", round(accuracy_score(y_val, pred), 4) * 100, '%')
     
-    st.markdown('제출')
+    st.markdown('#### Submission')
 
+    st.write('숫자 열의 평균으로 null 값 채우기')
+    st.code('''
+    test['Age'] = test['Age'].fillna(test['Age'].mean())
+    test['RoomService'] = test['RoomService'].fillna(test['RoomService'].mean())
+    test['FoodCourt'] = test['FoodCourt'].fillna(test['FoodCourt'].mean())
+    test['ShoppingMall'] = test['ShoppingMall'].fillna(test['ShoppingMall'].mean())
+    test['Spa'] = test['Spa'].fillna(test['Spa'].mean())
+    test['VRDeck'] = test['VRDeck'].fillna(test['VRDeck'].mean())
+    ''')
     test['Age'] = test['Age'].fillna(test['Age'].mean())
     test['RoomService'] = test['RoomService'].fillna(test['RoomService'].mean())
     test['FoodCourt'] = test['FoodCourt'].fillna(test['FoodCourt'].mean())
@@ -285,15 +349,42 @@ elif mnu == '모델링':
     test['Spa'] = test['Spa'].fillna(test['Spa'].mean())
     test['VRDeck'] = test['VRDeck'].fillna(test['VRDeck'].mean())
 
+    st.write('범주형 열의 모드로 null 값 채우기')
+    st.code('''
+    test['HomePlanet'] = test['HomePlanet'].fillna(test['HomePlanet'].mode()[0])
+    test['CryoSleep'] = test['CryoSleep'].fillna(test['CryoSleep'].mode()[0])
+    test['Destination'] = test['Destination'].fillna(test['Destination'].mode()[0])
+    test['VIP'] = test['VIP'].fillna(test['VIP'].mode()[0])
+    test['Cabin'] = test['Cabin'].fillna(test['Cabin'].mode()[0])
+    ''')
     test['HomePlanet'] = test['HomePlanet'].fillna(test['HomePlanet'].mode()[0])
     test['CryoSleep'] = test['CryoSleep'].fillna(test['CryoSleep'].mode()[0])
     test['Destination'] = test['Destination'].fillna(test['Destination'].mode()[0])
     test['VIP'] = test['VIP'].fillna(test['VIP'].mode()[0])
     test['Cabin'] = test['Cabin'].fillna(test['Cabin'].mode()[0])
 
+    st.write('Cabin 피처값을 P(좌현), S(우현)으로 나누기')
+    st.code('''
+    test['Cabin_side'] = test['Cabin'].apply(lambda x: x.split('/')[2])
+    test['Cabin_side'].unique()
+    ''')
     test['Cabin_side'] = test['Cabin'].apply(lambda x: x.split('/')[2])
     test['Cabin_side'].unique()
 
+    st.write('범주형 피쳐를 숫자 피쳐로 변환')
+    st.code('''
+    test.HomePlanet = test.HomePlanet.map({'Europa': 0, 'Earth': 1, 'Mars': 2})
+    test.Cabin_side = test.Cabin_side.map({'P': 0, 'S': 1})
+
+    test.Destination = test.Destination.map({'TRAPPIST-1e': 0, 'PSO J318.5-22': 1, '55 Cancri e': 2})
+    
+    test["CryoSleep"].replace(False, 0, inplace=True)
+    test["CryoSleep"].replace(True, 1, inplace=True)
+    test["VIP"].replace(False, 0, inplace=True)
+    test["VIP"].replace(True, 1, inplace=True)
+    
+    test = test.drop(['Name', 'Cabin'], axis=1)
+    ''')
     test.HomePlanet = test.HomePlanet.map({'Europa': 0, 'Earth': 1, 'Mars': 2})
     test.Cabin_side = test.Cabin_side.map({'P': 0, 'S': 1})
 
@@ -306,8 +397,26 @@ elif mnu == '모델링':
 
     test = test.drop(['Name', 'Cabin'], axis=1)
 
+    st.code('''
     st.dataframe(test.head())
+    ''')
+    st.dataframe(test.head())
+    
+    st.write('#### 최종 값 생성')
+    st.code('''
+    pred_final = rfc.predict(test)
 
+    a = test['PassengerId']
+    x = pd.DataFrame(a)
+    b = pred_final
+    y = pd.DataFrame(b)
+
+    final = pd.concat([x, y], axis=1)
+    final.replace(0, False, inplace=True)
+    final.replace(1, True, inplace=True)
+    final.rename(columns={0: 'Transported'}, inplace=True)
+    st.dataframe(final)
+    ''')
     pred_final = rfc.predict(test)
 
     a = test['PassengerId']
