@@ -11,9 +11,6 @@ train = pd.read_csv(data_path + 'train.csv', parse_dates=['PassengerId'])
 test = pd.read_csv(data_path + 'test.csv', parse_dates=['PassengerId'])
 submission = pd.read_csv(data_path + 'sample_submission.csv', parse_dates=['PassengerId'])
 
-def feature_engineering():
-    train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
-
 st.title('Spaceship_Titanic')
 
 mnu = st.sidebar.selectbox('메뉴', options=['설명', 'EDA', '시각화', '모델링'])
