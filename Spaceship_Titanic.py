@@ -94,6 +94,30 @@ elif mnu == 'EDA':
         st.text('승객의 나이(Age)')
         st.dataframe(train[['Age', 'Transported']].groupby(['Age'], as_index=True).mean().sort_values(by='Transported', ascending=True))
 
+    st.write(
+        'Cabin 열 값은 Deck/Cabin_num,Side 형식의 문자열이다. 여기서는 Cabin 열을 분할하고 Deck, Cabin_num 및 Side 열 3개를 새로 만든다. 이러한 개별 데이터를 통해 모델을 훈련시키는 것이 더 쉽다.')
+    st.write('따라서 다음 코드를 통해 Cabin 열을 Deck, Cabin_num 및 Side 열로 분할한다.')
+    st.code('''
+        train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
+        ''')
+    train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
+
+    st.write('원래의 Cabin 열을 더이상 필요하지 않으므로 삭제한다.')
+    st.code('''
+        try:
+            train = train.drop('Cabin', axis=1)
+        except KeyError:
+            print("Field does not exist")
+        ''')
+    try:
+        train = train.drop('Cabin', axis=1)
+    except KeyError:
+        print("Field does not exist")
+
+    st.write('좌, 우현에 따른 차원이동비율 비교')
+    st.dataframe(
+        train[['Side', 'Transported']].groupby(['Side'], as_index=True).mean().sort_values(by='Transported',ascending=False))
+
     st.markdown('- train.info()')
     buffer = io.StringIO()
     train.info(buf=buffer)
@@ -103,73 +127,6 @@ elif mnu == 'EDA':
     st.markdown('- test.info()')
     test.info(buf=buffer)
     st.text(buffer.getvalue())
-
-    # st.markdown('**필요 없는 피처 제거**')
-    # st.write('PassengerId 와 Name 열은 모델 훈련에 필요하지 않기 때문에 drop을 진행.')
-    # st.code('''
-    # dataset_df = train.drop(['PassengerId', 'Name'], axis=1)
-    # dataset_df.head(5)
-    # ''')
-    # train = train.drop(['PassengerId', 'Name'], axis=1)
-    # train.head(5)
-    #
-    # st.markdown('**결측치 제거**')
-    # st.write('다음의 코드를 통해 결측된 값을 확인.')
-    # st.code('''
-    # train.isnull().sum().sort_values(ascending=False)
-    # ''')
-    # train.isnull().sum().sort_values(ascending=False)
-
-    # st.write('데이터에는 숫자, 범주형 및 누락된 피처가 혼합되어 있다. TF-DF는 이러한 모든 피처 유형을 기본적으로 지원하므로 사전 처리가 필요하지 않다.')
-    # st.write('그러나 데이터에는 결측값이 있는 boolean 필드도 있다. TF-DF는 아직 boolean 필드를 지원하지 않으므로 boolean필드들을 int로 변환해야한다. boolean 필드의 결측값을 설명하기 위해 0으로 대체해보자.')
-    # st.write('여기서는 숫자 열의 null 값 항목도 0으로 바꾸고, 범주형 열의 결측값만 TF-DF가 처리하도록 할 것이다.')
-    # st.markdown('**참고 : 필요한 경우 TF-DF가 숫자 열의 결측값을 처리하도록 선택할 수 있다.**')
-    # st.code('''
-    # train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']] = train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']].fillna(value=0)
-    # train.isnull().sum().sort_values(ascending=False)
-    # ''')
-    # train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']] = train[['VIP', 'CryoSleep', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']].fillna(value=0)
-    # train.isnull().sum().sort_values(ascending=False)
-    #
-    # st.write('TF-DF는 boolean 열을 처리할 수 없기 때문에 Transported 열의 레이블을 조정하여 TF-DF가 예상하는 정수 형식으로 변환해야 한다.')
-    # st.code('''
-    # label = "Transported"
-    # train[label] = train[label].astype(int)
-    # ''')
-    # label = "Transported"
-    # train[label] = train[label].astype(int)
-    #
-    # st.write('또한 boolean필드, CryoSleep 및 VIP를 int로 변환할 것이다.')
-    # st.code('''
-    # train['VIP'] = train['VIP'].astype(int)
-    # train['CryoSleep'] = train['CryoSleep'].astype(int)
-    # ''')
-    # train['VIP'] = train['VIP'].astype(int)
-    # train['CryoSleep'] = train['CryoSleep'].astype(int)
-    #
-    # st.write('Cabin 열 값은 Deck/Cabin_num,Side 형식의 문자열이다. 여기서는 Cabin 열을 분할하고 Deck, Cabin_num 및 Side 열 3개를 새로 만든다. 이러한 개별 데이터를 통해 모델을 훈련시키는 것이 더 쉽다.')
-    # st.write('따라서 다음 코드를 통해 Cabin 열을 Deck, Cabin_num 및 Side 열로 분할한다.')
-    # st.code('''
-    # train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
-    # ''')
-    # train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
-    #
-    # st.write('원래의 Cabin 열을 더이상 필요하지 않으므로 삭제한다.')
-    # st.code('''
-    # try:
-    #     train = train.drop('Cabin', axis=1)
-    # except KeyError:
-    #     print("Field does not exist")
-    # ''')
-    # try:
-    #     train = train.drop('Cabin', axis=1)
-    # except KeyError:
-    #     print("Field does not exist")
-    #
-    # st.write('피처 엔지니어링을 통해 준비된 데이터를 확인해보자')
-    # st.dataframe(train.head(5))
-
-
 
 elif mnu == '시각화':
 
@@ -183,14 +140,14 @@ elif mnu == '시각화':
 
     st.markdown('- Transported의 분포도')
     fig, axes = plt.subplots(nrows=1, ncols=1)
-    sns.histplot(train['Transported'])
+    sns.histplot(train['Transported'], color='#454545')
     plt.xticks(np.arange(0,2,1))
     fig.set_size_inches(1,1)
     st.pyplot()
 
     st.markdown('- Transported의 분포도(y축 수정)')
     fig, axes = plt.subplots(nrows=1, ncols=1)
-    sns.histplot(train['Transported'])
+    sns.histplot(train['Transported'], color='#FFE6C7')
     plt.xticks(np.arange(0, 2, 1))
     plt.ylim(4200,4400)
     fig.set_size_inches(1, 1)
@@ -207,14 +164,14 @@ elif mnu == '시각화':
     mpl.rc('font', size=15)
     fig, ax = plt.subplots(5, 1, figsize=(10, 10))
     plt.subplots_adjust(top=2)
-    sns.histplot(train['Age'], color='b', bins=50, ax=ax[0]);
-    ax1 = sns.histplot(train['FoodCourt'], color='b', bins=50, ax=ax[1]);
+    sns.histplot(train['Age'], color='#22A699', bins=50, ax=ax[0]);
+    ax1 = sns.histplot(train['FoodCourt'], color='#F2BE22', bins=50, ax=ax[1]);
     ax1.set_xlim(0,30000)
-    ax2 = sns.histplot(train['ShoppingMall'], color='b', bins=50, ax=ax[2]);
+    ax2 = sns.histplot(train['ShoppingMall'], color='#F29727', bins=50, ax=ax[2]);
     ax2.set_xlim(0,25000)
-    ax3 = sns.histplot(train['Spa'], color='b', bins=50, ax=ax[3]);
+    ax3 = sns.histplot(train['Spa'], color='#F24C3D', bins=50, ax=ax[3]);
     ax3.set_xlim(0,23000)
-    ax4 = sns.histplot(train['VRDeck'], color='b', bins=50, ax=ax[4]);
+    ax4 = sns.histplot(train['VRDeck'], color='#7E1717', bins=50, ax=ax[4]);
     ax4.set_xlim(0,25000)
     st.pyplot()
 
@@ -222,11 +179,11 @@ elif mnu == '시각화':
     mpl.rc('font', size=15)
     fig, ax = plt.subplots(5, 1, figsize=(10, 10))
     plt.subplots_adjust(top=2)
-    sns.histplot(train['Age'], color='b', bins=50, ax=ax[0]);
-    sns.histplot(np.log(train['FoodCourt']), color='b', bins=50, ax=ax[1]);
-    sns.histplot(np.log(train['ShoppingMall']), color='b', bins=50, ax=ax[2]);
-    sns.histplot(np.log(train['Spa']), color='b', bins=50, ax=ax[3]);
-    sns.histplot(np.log(train['VRDeck']), color='b', bins=50, ax=ax[4]);
+    sns.histplot(train['Age'], color='#22A699', bins=50, ax=ax[0]);
+    sns.histplot(np.log(train['FoodCourt']), color='#F2BE22', bins=50, ax=ax[1]);
+    sns.histplot(np.log(train['ShoppingMall']), color='#F29727', bins=50, ax=ax[2]);
+    sns.histplot(np.log(train['Spa']), color='#F24C3D', bins=50, ax=ax[3]);
+    sns.histplot(np.log(train['VRDeck']), color='#7E1717', bins=50, ax=ax[4]);
     st.pyplot()
     st.markdown('Foodcourt, ShoppingMall, Spa, VRDeck 값들의 분포가 왼쪽으로 많이 편향되어 있어서 로그변환을 통해 정규분포에 가깝게 나타냄.')
 
