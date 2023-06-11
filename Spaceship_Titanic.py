@@ -191,6 +191,8 @@ elif mnu == '모델링':
     train.Destination = train.Destination.map({'TRAPPIST-1e': 0, 'PSO J318.5-22': 1, '55 Cancri e': 2})
 
     train = train.drop(['Name', 'Cabin'], axis=1)
+
+    st.dataframe(train)
     # st.markdown('**필요 없는 피처 제거**')
     # st.write('PassengerId 와 Name 열은 모델 훈련에 필요하지 않기 때문에 drop을 진행.')
     # st.code('''
