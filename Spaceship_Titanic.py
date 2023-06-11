@@ -95,7 +95,7 @@ elif mnu == 'EDA':
         st.dataframe(train[['Age', 'Transported']].groupby(['Age'], as_index=True).mean().sort_values(by='Transported', ascending=True))
 
     st.write(
-        'Cabin 열 값은 Deck/Cabin_num,Side 형식의 문자열이다. 여기서는 Cabin 열을 분할하고 Deck, Cabin_num 및 Side 열 3개를 새로 만든다. 이러한 개별 데이터를 통해 모델을 훈련시키는 것이 더 쉽다.')
+        'Cabin 열 값은 Deck/Cabin_num,Side 형식의 문자열이다. 여기서는 Cabin 열을 분할하고 Deck, Cabin_num 및 Side 열 3개를 새로 만든다.')
     st.write('따라서 다음 코드를 통해 Cabin 열을 Deck, Cabin_num 및 Side 열로 분할한다.')
     st.code('''
         train[["Deck", "Cabin_num", "Side"]] = train["Cabin"].str.split("/", expand=True)
